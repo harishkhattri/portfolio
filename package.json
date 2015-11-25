@@ -1,0 +1,14 @@
+{
+  "name"         : "portfolio",
+  "version"      : "1.0.0",
+  "description"  : "Portfolio Management application.",
+  "main"         : "server/server.js",
+  "author"       : "Harish Khattri",
+  "dependencies" : {
+    "express"    : "~4.13.3",
+    "mongoose"   : "~4.2.7",
+    "morgan"     : "~1.2.2",
+    "body-parser": "~1.5.2",
+    "method-override": "~2.1.2"
+    }
+}
