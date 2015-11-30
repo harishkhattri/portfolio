@@ -69,7 +69,7 @@ module.exports = function(app) {
 	// Frontend routes
 	app.get('*', function(request, response) {
 		var options = {
-				root: "./public/views"
+				root: "./public"
 		};
 		response.sendFile('index.html', options);
 	});
