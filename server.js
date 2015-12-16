@@ -10,7 +10,7 @@ var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 
 // configuration
-var db = require("../config/db");
+var db = require("./config/db");
 var port = process.env.PORT || 8080;
 
 mongoose.connect(db.url);
@@ -23,7 +23,7 @@ app.use(methodOverride("X-HTTP-Method-Override"));
 app.use(express.static(__dirname + "/public"));
 
 // routes
-require("../app/routes")(app);
+require("./app/routes")(app);
 
 // start app
 app.listen(port);

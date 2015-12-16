@@ -3,7 +3,7 @@
 
 var Stocks = require("./models/stocks");
 
-var getAllStocks = function() {
+var getAllStocks = function(response) {
 	// get all stocks in the database
 	Stocks.find(function(error, stocks) {
 		if (error) {
@@ -18,7 +18,7 @@ module.exports = function(app) {
 	// Server routes
 	// get all stocks
 	app.get('/api/stocks', function(request, response) {
-		getAllStocks();
+		getAllStocks(response);
 	});
 	
 	// create stock and send back all stocks after creation
@@ -36,7 +36,7 @@ module.exports = function(app) {
 								response.send(error);
 							}
 							
-							getAllStocks();
+							getAllStocks(response);
 						});
 			} else {
 				Stocks.create({
@@ -67,7 +67,7 @@ module.exports = function(app) {
 	});
 	
 	// Frontend routes
-	app.get('*', function(request, response) {
+	app.get('/', function(request, response) {
 		var options = {
 				root: "./public"
 		};

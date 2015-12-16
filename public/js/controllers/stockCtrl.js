@@ -1,7 +1,39 @@
 // public/js/controllers/stockCtrl.js
 
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
-	$scope.formData = {};
+	$scope.formData = {'text': ''};
+	$scope.companies = {};
+	
+	$('input.typeahead').typeahead({
+		hint: true,
+		highlight: true,
+		minLength: 2
+	}, {
+		async: true,
+		name: 'companies',
+		display: function(data) {
+			return data.name + "\t\t" + data.typeDisp + "-" + data.exchDisp;
+		},
+		source: function(query, syncResults, asyncResults) {
+			var searchCompanyUrl = "https://s.yimg.com/aq/autoc?query=" + query + "&region=US&lang=en-US";
+			$http.get(searchCompanyUrl)
+					.success(function(data) {
+						$scope.companies = data.ResultSet.Result;
+						return asyncResults(data.ResultSet.Result);
+					})
+					.error(function(data) {
+						console.log('Error: ' + data);
+					});
+		},
+		templates: {
+			suggestion: function(data) {
+				return "<p><span class='company-symbol'>" + data.symbol +
+					"</span><span class='company-name'>" + data.name.toUpperCase() +
+					"</span><span class='company-type'>" + data.typeDisp + "-" +
+					data.exchDisp + "</span></p>";
+			}
+		}
+	});
 	
 	// when landing on page get all stocks and show them
 	$http.get('/api/stocks')
