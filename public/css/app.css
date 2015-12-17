@@ -8,7 +8,7 @@
 	line-height: 30px;
 	outline: medium none;
 	padding: 8px 12px;
-	width: 470px;
+	width: 600px;
 }
 .typeahead {
 	background-color: #FFFFFF;
@@ -29,7 +29,7 @@
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	margin-top: 12px;
 	padding: 8px 0;
-	width: 472px;
+	width: 602px;
 }
 .tt-suggestion {
 	font-size: 12px;
@@ -46,12 +46,12 @@
 
 .company-symbol {
 	display: inline-block;
-	width: 90px;
+	width: 105px;
 }
 
 .company-name {
 	display: inline-block;
-	width: 240px;
+	width: 350px;
 }
 
 .company-type {

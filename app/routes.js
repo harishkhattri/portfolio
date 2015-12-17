@@ -29,7 +29,7 @@ module.exports = function(app) {
 			}
 			
 			if (stock) {
-				Stocks.update({isin: request.body.isin},
+				Stocks.update({symbol: request.body.symbol},
 						{$addToSet: {lists: request.body.list_name}},
 						function(error, stock) {
 							if (error) {
@@ -40,9 +40,8 @@ module.exports = function(app) {
 						});
 			} else {
 				Stocks.create({
-					isin: request.body.isin,
-					bsecode: request.body.bsecode || '',
-					nsesymbol: request.body.nsesymbol || '',
+					exchange: request.body.exchange,
+					symbol: request.body.symbol || '',
 					lists: [ request.body.list_name ]
 				}, function(error, stock) {
 					if (error) {
@@ -57,7 +56,7 @@ module.exports = function(app) {
 	
 	// delete a stock and send back all stocks after deletion
 	app.delete('/api/stocks/:isin', function(request, response) {
-		Stock.remove({isin: request.params.isin}, function(error, stock) {
+		Stock.remove({symbol: request.params.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}

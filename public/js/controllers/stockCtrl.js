@@ -27,8 +27,14 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		},
 		templates: {
 			suggestion: function(data) {
+				var companyName = data.name.toUpperCase();
+				
+				if (companyName.length > 45) {
+					companyName = companyName.substr(0, 45) + '...';
+				}
+				
 				return "<p><span class='company-symbol'>" + data.symbol +
-					"</span><span class='company-name'>" + data.name.toUpperCase() +
+					"</span><span class='company-name'>" + companyName +
 					"</span><span class='company-type'>" + data.typeDisp + "-" +
 					data.exchDisp + "</span></p>";
 			}
