@@ -1,9 +1,8 @@
 // public/js/controllers/stockCtrl.js
 
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
-	$scope.formData = {'text': ''};
-	$scope.companies = {};
-	
+	var selectedCompany = {};
+
 	$('input.typeahead').typeahead({
 		hint: true,
 		highlight: true,
@@ -18,7 +17,6 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 			var searchCompanyUrl = "https://s.yimg.com/aq/autoc?query=" + query + "&region=US&lang=en-US";
 			$http.get(searchCompanyUrl)
 					.success(function(data) {
-						$scope.companies = data.ResultSet.Result;
 						return asyncResults(data.ResultSet.Result);
 					})
 					.error(function(data) {
@@ -39,10 +37,12 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 					data.exchDisp + "</span></p>";
 			}
 		}
+	}).on("typeahead:selected", function(object, datum) {
+		selectedCompany = datum;
 	});
 	
 	// when landing on page get all stocks and show them
-	$http.get('/api/stocks')
+	$http.get('/stocks')
 		.success(function(data) {
 			$scope.stocks = data;
 		})
@@ -52,20 +52,27 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// when submitting the add form, send data to the Node API
 	$scope.addStock = function() {
-		var stockData = {};
-		$http.post('/api/stocks', stockData)
+		var stockData = {
+				"exchange": selectedCompany.exchDisp,
+				"symbol": selectedCompany.symbol,
+				"list_name": "Watch List"
+		};
+
+		$http.post('/stocks', stockData)
 			.success(function(data) {
 				$scope.formData = {};
+				selectedCompany = {};
 				$scope.stocks = data;
+				$('input.typeahead').val("");
 			})
 			.error(function(data) {
 				console.log('Error: ' + data);
 			});
 	};
 	
-	// delete a stock for given ISIN
-	$scope.deleteStock = function(isin) {
-		$http.delete('/api/stocks/' + isin)
+	// delete a stock for given symbol
+	$scope.deleteStock = function(symbol) {
+		$http.delete('/stocks/' + symbol)
 			.success(function(data) {
 				$scope.stocks = data;
 			})

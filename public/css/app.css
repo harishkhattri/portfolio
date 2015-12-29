@@ -58,3 +58,11 @@
 	display: inline-block;
 	width: 50px;
 }
+
+#list-panel {
+	padding-top: 10px;
+}
+
+#table-panel {
+	padding-top: 10px;
+}

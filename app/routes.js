@@ -2,6 +2,7 @@
 // Defines various routes for server and front end
 
 var Stocks = require("./models/stocks");
+var request = require("request");
 
 var getAllStocks = function(response) {
 	// get all stocks in the database
@@ -10,20 +11,59 @@ var getAllStocks = function(response) {
 			response.send(error);
 		}
 		
-		response.json(stocks);
+		var data = [];
+		
+		// Recursive function to handle asynchronous calls to http resquest
+		var getStockData = function(i) {
+			var url = "http://finance.yahoo.com/webservice/v1/symbols/" + stocks[i].symbol
+				+ "/quote?format=json&view=detail";
+			
+			request(url, function(err, res, body) {
+				if (err) {
+					response.send(err);
+				}
+				
+				var bodyData = JSON.parse(body).list.resources[0].resource.fields;
+				
+				var stockData = {
+						"change": parseFloat(bodyData.change).toFixed(2),
+						"day_high": parseFloat(bodyData.day_high).toFixed(2),
+						"day_low": parseFloat(bodyData.day_low).toFixed(2),
+						"name": bodyData.name,
+						"price": parseFloat(bodyData.price).toFixed(2),
+						"symbol": bodyData.symbol,
+						"year_high": parseFloat(bodyData.year_high).toFixed(2),
+						"year_low": parseFloat(bodyData.year_low).toFixed(2)
+				};
+				
+				data.push(stockData);
+				
+				i++;
+				
+				if(i < stocks.length) {
+					getStockData(i);
+				} else {
+					response.json(data);
+				}
+			});
+		};
+		
+		getStockData(0);
+		
+		
 	});
 };
 
 module.exports = function(app) {
 	// Server routes
 	// get all stocks
-	app.get('/api/stocks', function(request, response) {
+	app.get('/stocks', function(request, response) {
 		getAllStocks(response);
 	});
 	
 	// create stock and send back all stocks after creation
-	app.post('api/stocks', function(request, response) {
-		Stocks.findOne({isin: request.body.isin}, function(error, stock) {
+	app.post('/stocks', function(request, response) {
+		Stocks.findOne({symbol: request.body.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}
@@ -41,27 +81,27 @@ module.exports = function(app) {
 			} else {
 				Stocks.create({
 					exchange: request.body.exchange,
-					symbol: request.body.symbol || '',
+					symbol: request.body.symbol,
 					lists: [ request.body.list_name ]
 				}, function(error, stock) {
 					if (error) {
 						response.send(error);
 					}
 					
-					getAllStocks();
+					getAllStocks(response);
 				});
 			}
 		});
 	});
 	
 	// delete a stock and send back all stocks after deletion
-	app.delete('/api/stocks/:isin', function(request, response) {
-		Stock.remove({symbol: request.params.symbol}, function(error, stock) {
+	app.delete('/stocks/:symbol', function(request, response) {
+		Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}
 			
-			getAllStocks();
+			getAllStocks(response);
 		});
 	});
 	
