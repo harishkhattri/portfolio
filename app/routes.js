@@ -4,9 +4,15 @@
 var Stocks = require("./models/stocks");
 var request = require("request");
 
-var getAllStocks = function(response) {
+var getStocks = function(response, exchange) {
+	var selectedExchange = exchange;
+	
+	if (exchange === 'BSE') {
+		selectedExchange = 'Bombay';
+	}
+	
 	// get all stocks in the database
-	Stocks.find(function(error, stocks) {
+	Stocks.find({exchange: selectedExchange},function(error, stocks) {
 		if (error) {
 			response.send(error);
 		}
@@ -49,16 +55,14 @@ var getAllStocks = function(response) {
 		};
 		
 		getStockData(0);
-		
-		
 	});
 };
 
 module.exports = function(app) {
 	// Server routes
 	// get all stocks
-	app.get('/stocks', function(request, response) {
-		getAllStocks(response);
+	app.get('/stocks/:exchange', function(request, response) {
+		getStocks(response, request.params.exchange);
 	});
 	
 	// create stock and send back all stocks after creation
@@ -76,7 +80,7 @@ module.exports = function(app) {
 								response.send(error);
 							}
 							
-							getAllStocks(response);
+							getStocks(response, request.body.selectedExchange);
 						});
 			} else {
 				Stocks.create({
@@ -88,20 +92,20 @@ module.exports = function(app) {
 						response.send(error);
 					}
 					
-					getAllStocks(response);
+					getStocks(response, request.body.selectedExchange);
 				});
 			}
 		});
 	});
 	
 	// delete a stock and send back all stocks after deletion
-	app.delete('/stocks/:symbol', function(request, response) {
+	app.delete('/stocks/:symbol/:exchange', function(request, response) {
 		Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}
 			
-			getAllStocks(response);
+			getStocks(response, request.params.exchange);
 		});
 	});
 	

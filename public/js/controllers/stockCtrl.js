@@ -2,6 +2,7 @@
 
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
 	var selectedCompany = {};
+	var selectedExchange = 'BSE';
 
 	$('input.typeahead').typeahead({
 		hint: true,
@@ -41,21 +42,32 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		selectedCompany = datum;
 	});
 	
-	// when landing on page get all stocks and show them
-	$http.get('/stocks')
+	$('#exchange').on('change', function(event) {
+		selectedExchange = $('#exchange').val();
+		$scope.getStocks();
+	});
+	
+	$scope.getStocks = function() {
+		$http.get('/stocks/' + selectedExchange)
 		.success(function(data) {
 			$scope.stocks = data;
 		})
 		.error(function(data) {
 			console.log('Error: ' + data);
 		});
+	};
+	
+	$scope.getStocks();
+	
+	// when landing on page get all stocks and show them
 	
 	// when submitting the add form, send data to the Node API
 	$scope.addStock = function() {
 		var stockData = {
 				"exchange": selectedCompany.exchDisp,
 				"symbol": selectedCompany.symbol,
-				"list_name": "Watch List"
+				"list_name": "Watch List",
+				"selectedExchange": selectedExchange
 		};
 
 		$http.post('/stocks', stockData)
@@ -72,7 +84,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// delete a stock for given symbol
 	$scope.deleteStock = function(symbol) {
-		$http.delete('/stocks/' + symbol)
+		$http.delete('/stocks/' + symbol + '/' + selectedExchange)
 			.success(function(data) {
 				$scope.stocks = data;
 			})

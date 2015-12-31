@@ -59,10 +59,11 @@
 	width: 50px;
 }
 
-#list-panel {
+#exchange-dd {
 	padding-top: 10px;
+	padding-right: 15px;
 }
 
-#table-panel {
+#list-panel, #table-panel {
 	padding-top: 10px;
 }
