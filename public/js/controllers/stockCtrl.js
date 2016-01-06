@@ -48,7 +48,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	});
 	
 	$scope.getStocks = function() {
-		$http.get('/stocks/' + selectedExchange)
+		$http.get('/' + selectedExchange)
 		.success(function(data) {
 			$scope.stocks = data;
 		})
@@ -57,9 +57,12 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		});
 	};
 	
+	// when landing on page get all stocks and show them
 	$scope.getStocks();
 	
-	// when landing on page get all stocks and show them
+	setInterval(function() {
+		$scope.getStocks();
+	}, 5000);
 	
 	// when submitting the add form, send data to the Node API
 	$scope.addStock = function() {
@@ -70,7 +73,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 				"selectedExchange": selectedExchange
 		};
 
-		$http.post('/stocks', stockData)
+		$http.post('/', stockData)
 			.success(function(data) {
 				$scope.formData = {};
 				selectedCompany = {};
@@ -84,7 +87,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// delete a stock for given symbol
 	$scope.deleteStock = function(symbol) {
-		$http.delete('/stocks/' + symbol + '/' + selectedExchange)
+		$http.delete('/' + symbol + '/' + selectedExchange)
 			.success(function(data) {
 				$scope.stocks = data;
 			})

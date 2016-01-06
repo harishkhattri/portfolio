@@ -60,13 +60,17 @@ var getStocks = function(response, exchange) {
 
 module.exports = function(app) {
 	// Server routes
+	app.get('/favicon.ico', function(request, response) {
+		// do nothing
+	});
+	
 	// get all stocks
-	app.get('/stocks/:exchange', function(request, response) {
+	app.get('/:exchange', function(request, response) {
 		getStocks(response, request.params.exchange);
 	});
 	
 	// create stock and send back all stocks after creation
-	app.post('/stocks', function(request, response) {
+	app.post('/', function(request, response) {
 		Stocks.findOne({symbol: request.body.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);
@@ -99,7 +103,7 @@ module.exports = function(app) {
 	});
 	
 	// delete a stock and send back all stocks after deletion
-	app.delete('/stocks/:symbol/:exchange', function(request, response) {
+	app.delete('/:symbol/:exchange', function(request, response) {
 		Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
 			if (error) {
 				response.send(error);

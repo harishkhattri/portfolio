@@ -1,3 +1,3 @@
 // public/js/app.js
 
-angular.module('portfolio', ['ngRoute', 'appRoutes', 'StockCtrl']);
+angular.module('portfolio', ['StockCtrl']);
