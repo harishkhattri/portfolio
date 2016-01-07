@@ -11,6 +11,8 @@ var getStocks = function(response, exchange) {
 		selectedExchange = 'Bombay';
 	}
 	
+	console.log("Exchange: " + selectedExchange);
+	
 	// get all stocks in the database
 	Stocks.find({exchange: selectedExchange},function(error, stocks) {
 		if (error) {
@@ -54,7 +56,11 @@ var getStocks = function(response, exchange) {
 			});
 		};
 		
-		getStockData(0);
+		if (stocks.length > 0) {
+			getStockData(0);
+		} else {
+			response.json(data);
+		}
 	});
 };
 
