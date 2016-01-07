@@ -11,7 +11,7 @@ The application is showing following information about added stocks:
 - Year Low
 
 The application is getting information about stock from Yahoo Finance webservice. The application
-currently have only one hard-coded list named "Watch List". In later versions application will show
+currently have only one hard-coded list named "Watch List". In future application will have
 multiple lists and also user will be able to create list.
 
 The user could change exchange using drop down which have BSE and NSE options. The BSE is selected
@@ -19,16 +19,15 @@ by default.
 
 **Note: This application does not meant to buy or sell stocks.**
 
-## Techology Stack
-This application is developed using MEAN stack (MongoDB, ExpressJs, AngularJs and Node.js).
-
 ## Prerequisites
-As this application is using MEAN stack, user needs to install Node.js and MongoDB on his local machine.
-User could install Node.js [from here] (https://nodejs.org/en/download/package-manager/).
-User could install MongoDB [from here] (https://docs.mongodb.org/manual/installation/).
+As this application is using MEAN stack (MongoDB, ExpressJs, AngularJs and Node.js), user needs to
+install Node.js, npm and MongoDB on his local machine.
+
+* User could install Node.js [from here] (https://nodejs.org/en/download/package-manager/).
+* User could install MongoDB [from here] (https://docs.mongodb.org/manual/installation/).
 
 ## Running Application
-After installing Node.js and MongoDB, first user needs to start MongoDB using following steps:
+After installing prerequisites, first user needs to start MongoDB using following steps:
 
 * Start command prompt
 * Go to location where MongoDB installed e.g. "c:\Program Files\MongoDB\Server\3.2\bin"
