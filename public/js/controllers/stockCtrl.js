@@ -48,7 +48,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	});
 	
 	$scope.getStocks = function() {
-		$http.get('/' + selectedExchange)
+		$http.get('/stocks/' + selectedExchange)
 		.success(function(data) {
 			$scope.stocks = data;
 		})
@@ -73,7 +73,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 				"selectedExchange": selectedExchange
 		};
 
-		$http.post('/', stockData)
+		$http.post('/stocks', stockData)
 			.success(function(data) {
 				$scope.formData = {};
 				selectedCompany = {};
@@ -87,7 +87,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// delete a stock for given symbol
 	$scope.deleteStock = function(symbol) {
-		$http.delete('/' + symbol + '/' + selectedExchange)
+		$http.delete('/stocks/' + symbol + '/' + selectedExchange)
 			.success(function(data) {
 				$scope.stocks = data;
 			})
