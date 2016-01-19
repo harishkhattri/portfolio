@@ -64,6 +64,20 @@
 	padding-right: 15px;
 }
 
-#list-panel, #table-panel {
+#table-panel, #list-form {
 	padding-top: 10px;
+}
+
+#list-panel {
+	padding-top: 10px;
+	font-size: 12px;
+}
+
+#close-icon {
+	width: 15px;
+	height: 15px;
+}
+
+.table tbody tr td {
+	vertical-align: middle;
 }

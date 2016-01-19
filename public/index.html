@@ -18,6 +18,7 @@
 	
 	<!-- Angular Custom -->
 	<script type="text/javascript" src="js/controllers/stockCtrl.js"></script>
+	<script type="text/javascript" src="js/controllers/listCtrl.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
 </head>	
 <body ng-app="portfolio"  ng-controller="StockController">
@@ -47,11 +48,23 @@
 		</div>
 		
 		<!-- List Code goes here -->
-		<div id="list-panel" class="col-sm-2">
+		<div id="list-panel" class="col-sm-2" ng-controller="ListController">
 			<div class="panel panel-default">
 				<div class="list-group">
-					<a href="#" class="list-group-item">Watch List</a>
+					<a href="#" class="list-group-item" ng-repeat="list in lists">{{list.name}}
+						<img id="close-icon" class="pull-right" alt="Remove List" src="images/close.png" 
+							title="Remove List" ng-click="deleteList(list.name)" />
+					</a>
 				</div>
+			</div>
+			<div id="list-form" class="row">
+				<form>
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Please enter list name" ng-model="listData.name">
+					</div>
+					
+					<button type="submit" class="btn btn-primary" ng-click="createList()">Create List</button>
+				</form>
 			</div>
 		</div>
 		

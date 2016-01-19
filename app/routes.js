@@ -2,6 +2,7 @@
 // Defines various routes for server and front end
 
 var Stocks = require("./models/stocks");
+var Lists = require("./models/lists")
 var request = require("request");
 
 var getStocks = function(response, exchange) {
@@ -10,8 +11,6 @@ var getStocks = function(response, exchange) {
 	if (exchange === 'BSE') {
 		selectedExchange = 'Bombay';
 	}
-	
-	console.log("Exchange: " + selectedExchange);
 	
 	// get all stocks in the database
 	Stocks.find({exchange: selectedExchange},function(error, stocks) {
@@ -61,6 +60,17 @@ var getStocks = function(response, exchange) {
 		} else {
 			response.json(data);
 		}
+	});
+};
+
+var getLists = function(response) {
+	// get all stocks in the database
+	Lists.find({}, function(error, lists) {
+		if (error) {
+			response.send(error);
+		}
+		
+		response.json(lists);
 	});
 };
 
@@ -116,6 +126,43 @@ module.exports = function(app) {
 			}
 			
 			getStocks(response, request.params.exchange);
+		});
+	});
+	
+	// get all lists
+	app.get('/lists', function(request, response) {
+		getLists(response);
+	});
+	
+	// create list if not exists and send back all lists after creation
+	app.post('/lists', function(request, response) {
+		Lists.findOne({name: request.body.name}, function(error, list) {
+			if (error) {
+				response.send(error);
+			}
+
+			if (!list) {
+				Lists.create({
+					name: request.body.name
+				}, function(error, list) {
+					if (error) {
+						response.send(error);
+					}
+					
+					getLists(response);
+				});
+			}
+		});
+	});
+	
+	// delete a list and send back all lists after deletion
+	app.delete('/lists/:name', function(request, response) {
+		Lists.remove({name: request.params.name}, function(error, list) {
+			if (error) {
+				response.send(error);
+			}
+			
+			getLists(response);
 		});
 	});
 	
