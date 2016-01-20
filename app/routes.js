@@ -142,8 +142,10 @@ module.exports = function(app) {
 			}
 
 			if (!list) {
+				var listId = request.body.name.toLowerCase().replace(/\s/g, '-');
 				Lists.create({
-					name: request.body.name
+					name: request.body.name,
+					id: listId
 				}, function(error, list) {
 					if (error) {
 						response.send(error);

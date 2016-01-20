@@ -4,5 +4,6 @@
 var mongoose = require("mongoose");
 
 module.exports = mongoose.model('Lists', {
-	name: {type: String, default: ''}
+	name: {type: String, default: ''},
+	id: {type: String, default: ''}
 });

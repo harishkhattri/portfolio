@@ -51,7 +51,11 @@
 		<div id="list-panel" class="col-sm-2" ng-controller="ListController">
 			<div class="panel panel-default">
 				<div class="list-group">
-					<a href="#" class="list-group-item" ng-repeat="list in lists">{{list.name}}
+					<a href="#" class="list-group-item active" id="holdings" ng-click="activate('Holdings', 'holdings')">Holdings</a>
+					<a href="#" class="list-group-item" id="watch-list" ng-click="activate('Watch List', 'watch-list')">Watch List</a>
+					<a href="#" class="list-group-item" id="past-holdings" ng-click="activate('Past Holdings', 'past-holdings')">Past Holdings</a>
+					<a href="#" class="list-group-item" ng-repeat="list in lists" id="{{list.id}}" ng-click="activate(list.name, list.id)">
+						{{list.name}}
 						<img id="close-icon" class="pull-right" alt="Delete List" src="images/close.png" 
 							title="Delete List" ng-click="deleteList(list.name)" />
 					</a>

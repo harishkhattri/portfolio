@@ -1,17 +1,15 @@
 // public/js/controllers/listCtrl.js
 
 angular.module('ListCtrl', []).controller('ListController', function($scope, $http) {
+	var previousActiveListId = '';
+	var currentActiveListId = 'holdings';
+	var currentActiveListName = 'Holdings';
 	$scope.listData = {};
-
+	
 	$scope.getLists = function() {
 		$http.get('/lists')
 		.success(function(data) {
-			if (data.length === 0) {
-				$('.list-group').hide();
-			} else {
-				$('.list-group').show();
-				$scope.lists = data;
-			}
+			$scope.lists = data;
 		})
 		.error(function(data) {
 			console.log('Error: ' + data);
@@ -42,5 +40,18 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 			.error(function(data) {
 				console.log('Error: ' + data);
 			});
+	};
+	
+	// Activate selected list item and deactivated previously selected list item
+	$scope.activate = function(name, id) {
+		previousActiveListId = currentActiveListId;
+		
+		if (previousActiveListId !== '') {
+			$("#" + previousActiveListId).removeClass("active");
+		}
+		
+		currentActiveListId = id;
+		currentActiveListName = name;
+		$("#" + currentActiveListId).addClass("active");
 	};
 });
