@@ -5,7 +5,7 @@ var Stocks = require("./models/stocks");
 var Lists = require("./models/lists")
 var request = require("request");
 
-var getStocks = function(response, exchange) {
+var getStocks = function(response, exchange, list_name) {
 	var selectedExchange = exchange;
 	
 	if (exchange === 'BSE') {
@@ -13,7 +13,7 @@ var getStocks = function(response, exchange) {
 	}
 	
 	// get all stocks in the database
-	Stocks.find({exchange: selectedExchange},function(error, stocks) {
+	Stocks.find({exchange: selectedExchange, lists: list_name},function(error, stocks) {
 		if (error) {
 			response.send(error);
 		}
@@ -81,8 +81,8 @@ module.exports = function(app) {
 	});
 	
 	// get all stocks
-	app.get('/stocks/:exchange', function(request, response) {
-		getStocks(response, request.params.exchange);
+	app.get('/stocks/:exchange/:list_name', function(request, response) {
+		getStocks(response, request.params.exchange, request.params.list_name);
 	});
 	
 	// create stock and send back all stocks after creation
@@ -100,7 +100,7 @@ module.exports = function(app) {
 								response.send(error);
 							}
 							
-							getStocks(response, request.body.selectedExchange);
+							getStocks(response, request.body.selectedExchange, request.body.list_name);
 						});
 			} else {
 				Stocks.create({
@@ -112,20 +112,40 @@ module.exports = function(app) {
 						response.send(error);
 					}
 					
-					getStocks(response, request.body.selectedExchange);
+					getStocks(response, request.body.selectedExchange, request.body.list_name);
 				});
 			}
 		});
 	});
 	
 	// delete a stock and send back all stocks after deletion
-	app.delete('/stocks/:symbol/:exchange', function(request, response) {
-		Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
+	app.delete('/stocks/:symbol/:exchange/:list_name', function(request, response) {
+		Stocks.findOne({symbol: request.params.symbol, lists: request.params.list_name}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}
 			
-			getStocks(response, request.params.exchange);
+			if (stock) {
+				if (stock.lists.length > 1) {
+					Stocks.update({symbol: request.params.symbol},
+							{$pull: {lists: request.params.list_name}},
+							function(error, stock) {
+								if (error) {
+									response.send(error);
+								}
+								
+								getStocks(response, request.params.exchange, request.params.list_name);
+							});
+				} else {
+					Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
+						if (error) {
+							response.send(error);
+						}
+						
+						getStocks(response, request.params.exchange, request.params.list_name);
+					});
+				}
+			}
 		});
 	});
 	

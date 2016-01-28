@@ -3,6 +3,7 @@
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
 	var selectedCompany = {};
 	var selectedExchange = 'BSE';
+	var selectedList = 'Holdings';
 
 	$('input.typeahead').typeahead({
 		hint: true,
@@ -44,11 +45,12 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	$('#exchange').on('change', function(event) {
 		selectedExchange = $('#exchange').val();
-		$scope.getStocks();
+		$scope.getStocks(selectedList);
 	});
 	
-	$scope.getStocks = function() {
-		$http.get('/stocks/' + selectedExchange)
+	$scope.getStocks = function(activeList) {
+		selectedList = activeList;
+		$http.get('/stocks/' + selectedExchange + '/' + selectedList)
 		.success(function(data) {
 			$scope.stocks = data;
 		})
@@ -58,10 +60,10 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	};
 	
 	// when landing on page get all stocks and show them
-	$scope.getStocks();
+	$scope.getStocks(selectedList);
 	
 	setInterval(function() {
-		$scope.getStocks();
+		$scope.getStocks(selectedList);
 	}, 5000);
 	
 	// when submitting the add form, send data to the Node API
@@ -69,7 +71,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		var stockData = {
 				"exchange": selectedCompany.exchDisp,
 				"symbol": selectedCompany.symbol,
-				"list_name": "Watch List",
+				"list_name": selectedList,
 				"selectedExchange": selectedExchange
 		};
 
@@ -87,7 +89,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// delete a stock for given symbol
 	$scope.deleteStock = function(symbol) {
-		$http.delete('/stocks/' + symbol + '/' + selectedExchange)
+		$http.delete('/stocks/' + symbol + '/' + selectedExchange + '/' + selectedList)
 			.success(function(data) {
 				$scope.stocks = data;
 			})

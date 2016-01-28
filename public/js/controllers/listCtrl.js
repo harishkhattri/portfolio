@@ -53,5 +53,7 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 		currentActiveListId = id;
 		currentActiveListName = name;
 		$("#" + currentActiveListId).addClass("active");
+		
+		$scope.getStocks(currentActiveListName);
 	};
 });
