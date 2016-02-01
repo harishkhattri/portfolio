@@ -32,14 +32,28 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 	};
 	
 	// delete the selected list
-	$scope.deleteList = function(name) {
-		$http.delete('/lists/' + name)
+	$scope.deleteList = function() {
+		$('#remove-list-modal').modal('hide');
+
+		$http.delete('/lists/' + currentActiveListName)
 			.success(function(data) {
 				$scope.lists = data;
+
+				for (var i = 0; i < $scope.stocks.length; i++) {
+					$scope.deleteStock($scope.stocks[i].symbol);
+				}
+				
+				currentActiveListId = '';
+				$scope.activate("Holdings", "holdings");
 			})
 			.error(function(data) {
 				console.log('Error: ' + data);
 			});
+	};
+	
+	// show confirmation dialog when user delete a list
+	$scope.confirmDelete = function() {
+		$('#remove-list-modal').modal('show');
 	};
 	
 	// Activate selected list item and deactivated previously selected list item
