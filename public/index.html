@@ -51,14 +51,13 @@
 		<div id="list-panel" class="col-sm-2" ng-controller="ListController">
 			<div class="panel panel-default">
 				<div class="list-group">
-					<a href="#" class="list-group-item active" id="holdings" ng-click="activate('Holdings', 'holdings')">Holdings</a>
-					<a href="#" class="list-group-item" id="watch-list" ng-click="activate('Watch List', 'watch-list')">Watch List</a>
-					<a href="#" class="list-group-item" id="past-holdings" ng-click="activate('Past Holdings', 'past-holdings')">Past Holdings</a>
+					<a href="#" class="list-group-item active" id="holdings" ng-click="activate('holdings')">Holdings</a>
+					<a href="#" class="list-group-item" id="watch-list" ng-click="activate('watch-list')">Watch List</a>
+					<a href="#" class="list-group-item" id="past-holdings" ng-click="activate('past-holdings')">Past Holdings</a>
 
-					<a href="#" class="list-group-item" ng-repeat="list in lists" id="{{list.id}}" ng-click="activate(list.name, list.id)">
+					<a href="#" class="list-group-item" ng-repeat="list in lists" id="{{list.id}}" ng-click="activate(list.id)">
 						{{list.name}}
-						<img id="close-icon" class="pull-right" alt="Delete List" src="images/close.png" 
-							title="Delete List" ng-click="confirmDelete()" />
+						<span class="glyphicon glyphicon-remove pull-right" ng-click="confirmDelete()"></span>
 					</a>
 				</div>
 			</div>
@@ -79,11 +78,37 @@
 							<h4 class="modal-title">Delete List</h4>
 						</div>
 						<div class="modal-body">
-							<p>Do you want to delete this list?
+							<p>Do you want to delete this list?</p>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
 							<button type="button" class="btn btn-primary" ng-click="deleteList()">Yes</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="move-to-modal" class="modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title">Move Stock to Another List</h4>
+						</div>
+						<div class="modal-body">
+							<p>Please choose a list</p>
+							<div class="list-group">
+								<a href="#" class="list-group-item" id="move-holdings" ng-click="setDestination('holdings')">Holdings</a>
+								<a href="#" class="list-group-item" id="move-watch-list" ng-click="setDestination('watch-list')">Watch List</a>
+								<a href="#" class="list-group-item" id="move-past-holdings" ng-click="setDestination('past-holdings')">Past Holdings</a>
+			
+								<a href="#" class="list-group-item" ng-repeat="list in lists" id="move-{{list.id}}" ng-click="setDestination(list.id)">
+									{{list.name}}
+								</a>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary" ng-click="moveStock()">Move</button>
 						</div>
 					</div>
 				</div>
@@ -117,7 +142,17 @@
 							<td>{{stock.day_low}}</td>
 							<td>{{stock.year_high}}</td>
 							<td>{{stock.year_low}}</td>
-							<td><input type="button" class="btn btn-link" value="Remove Stock" ng-click="deleteStock(stock.symbol)"></td>
+							<td>
+								<div class="btn-group">
+									<button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle">Actions
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li><a href="#" ng-click="deleteStock(stock.symbol)">Remove</a></li>
+										<li><a href="#" ng-click="openMoveToDialog(stock.symbol)">Move To</a></li>
+									</ul>
+								</div>
+							</td>
 						</tr>
 					</tbody>
 				</table>

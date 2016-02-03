@@ -3,7 +3,6 @@
 angular.module('ListCtrl', []).controller('ListController', function($scope, $http) {
 	var previousActiveListId = '';
 	var currentActiveListId = 'holdings';
-	var currentActiveListName = 'Holdings';
 	$scope.listData = {};
 	
 	$scope.getLists = function() {
@@ -35,7 +34,7 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 	$scope.deleteList = function() {
 		$('#remove-list-modal').modal('hide');
 
-		$http.delete('/lists/' + currentActiveListName)
+		$http.delete('/lists/' + currentActiveListId)
 			.success(function(data) {
 				$scope.lists = data;
 
@@ -44,7 +43,7 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 				}
 				
 				currentActiveListId = '';
-				$scope.activate("Holdings", "holdings");
+				$scope.activate("holdings");
 			})
 			.error(function(data) {
 				console.log('Error: ' + data);
@@ -57,7 +56,7 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 	};
 	
 	// Activate selected list item and deactivated previously selected list item
-	$scope.activate = function(name, id) {
+	$scope.activate = function(id) {
 		previousActiveListId = currentActiveListId;
 		
 		if (previousActiveListId !== '') {
@@ -65,9 +64,8 @@ angular.module('ListCtrl', []).controller('ListController', function($scope, $ht
 		}
 		
 		currentActiveListId = id;
-		currentActiveListName = name;
 		$("#" + currentActiveListId).addClass("active");
 		
-		$scope.getStocks(currentActiveListName);
+		$scope.getStocks(currentActiveListId);
 	};
 });

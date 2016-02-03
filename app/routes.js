@@ -5,7 +5,7 @@ var Stocks = require("./models/stocks");
 var Lists = require("./models/lists")
 var request = require("request");
 
-var getStocks = function(response, exchange, list_name) {
+var getStocks = function(response, exchange, list_id) {
 	var selectedExchange = exchange;
 	
 	if (exchange === 'BSE') {
@@ -13,7 +13,7 @@ var getStocks = function(response, exchange, list_name) {
 	}
 	
 	// get all stocks in the database
-	Stocks.find({exchange: selectedExchange, lists: list_name},function(error, stocks) {
+	Stocks.find({exchange: selectedExchange, lists: list_id},function(error, stocks) {
 		if (error) {
 			response.send(error);
 		}
@@ -77,12 +77,13 @@ var getLists = function(response) {
 module.exports = function(app) {
 	// Server routes
 	app.get('/favicon.ico', function(request, response) {
-		// do nothing
+		response.writeHead(200, {'Content-Type': 'image/x-icon'} );
+		response.end();
 	});
 	
 	// get all stocks
-	app.get('/stocks/:exchange/:list_name', function(request, response) {
-		getStocks(response, request.params.exchange, request.params.list_name);
+	app.get('/stocks/:exchange/:list_id', function(request, response) {
+		getStocks(response, request.params.exchange, request.params.list_id);
 	});
 	
 	// create stock and send back all stocks after creation
@@ -94,33 +95,54 @@ module.exports = function(app) {
 			
 			if (stock) {
 				Stocks.update({symbol: request.body.symbol},
-						{$addToSet: {lists: request.body.list_name}},
+						{$addToSet: {lists: request.body.list_id}},
 						function(error, stock) {
 							if (error) {
 								response.send(error);
 							}
 							
-							getStocks(response, request.body.selectedExchange, request.body.list_name);
+							getStocks(response, request.body.selectedExchange, request.body.list_id);
 						});
 			} else {
 				Stocks.create({
 					exchange: request.body.exchange,
 					symbol: request.body.symbol,
-					lists: [ request.body.list_name ]
+					lists: [ request.body.list_id ]
 				}, function(error, stock) {
 					if (error) {
 						response.send(error);
 					}
 					
-					getStocks(response, request.body.selectedExchange, request.body.list_name);
+					getStocks(response, request.body.selectedExchange, request.body.list_id);
 				});
 			}
 		});
 	});
 	
+	// move stock from one list to another and send back all stocks for source list
+	app.post('/stocks/move', function(request, response) {
+		Stocks.update({symbol: request.body.symbol},
+				{$addToSet: {lists: request.body.destination}},
+				function(error, stock) {
+					if (error) {
+						response.send(error);
+					}
+					
+					Stocks.update({symbol: request.body.symbol},
+							{$pull: {lists: request.body.source}},
+							function(error, stock) {
+								if (error) {
+									response.send(error);
+								}
+								
+								getStocks(response, request.body.selectedExchange, request.body.source);
+							});
+				});
+	});
+	
 	// delete a stock and send back all stocks after deletion
-	app.delete('/stocks/:symbol/:exchange/:list_name', function(request, response) {
-		Stocks.findOne({symbol: request.params.symbol, lists: request.params.list_name}, function(error, stock) {
+	app.delete('/stocks/:symbol/:exchange/:list_id', function(request, response) {
+		Stocks.findOne({symbol: request.params.symbol, lists: request.params.list_id}, function(error, stock) {
 			if (error) {
 				response.send(error);
 			}
@@ -128,13 +150,13 @@ module.exports = function(app) {
 			if (stock) {
 				if (stock.lists.length > 1) {
 					Stocks.update({symbol: request.params.symbol},
-							{$pull: {lists: request.params.list_name}},
+							{$pull: {lists: request.params.list_id}},
 							function(error, stock) {
 								if (error) {
 									response.send(error);
 								}
 								
-								getStocks(response, request.params.exchange, request.params.list_name);
+								getStocks(response, request.params.exchange, request.params.list_id);
 							});
 				} else {
 					Stocks.remove({symbol: request.params.symbol}, function(error, stock) {
@@ -142,7 +164,7 @@ module.exports = function(app) {
 							response.send(error);
 						}
 						
-						getStocks(response, request.params.exchange, request.params.list_name);
+						getStocks(response, request.params.exchange, request.params.list_id);
 					});
 				}
 			}
@@ -178,8 +200,8 @@ module.exports = function(app) {
 	});
 	
 	// delete a list and send back all lists after deletion
-	app.delete('/lists/:name', function(request, response) {
-		Lists.remove({name: request.params.name}, function(error, list) {
+	app.delete('/lists/:id', function(request, response) {
+		Lists.remove({id: request.params.id}, function(error, list) {
 			if (error) {
 				response.send(error);
 			}

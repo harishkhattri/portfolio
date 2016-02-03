@@ -3,7 +3,10 @@
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
 	var selectedCompany = {};
 	var selectedExchange = 'BSE';
-	var selectedList = 'Holdings';
+	var selectedList = 'holdings';
+	var selectedSymbolToMove = '';
+	var destinationToMove = '';
+	var previouosDestination = '';
 
 	$('input.typeahead').typeahead({
 		hint: true,
@@ -48,6 +51,10 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		$scope.getStocks(selectedList);
 	});
 	
+	$('#move-to-modal').on('hide.bs.modal', function() {
+		$('#move-' + selectedList).show();
+	});
+	
 	$scope.getStocks = function(activeList) {
 		selectedList = activeList;
 		$http.get('/stocks/' + selectedExchange + '/' + selectedList)
@@ -64,20 +71,19 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	setInterval(function() {
 		$scope.getStocks(selectedList);
-	}, 5000);
+	}, 10000);
 	
 	// when submitting the add form, send data to the Node API
 	$scope.addStock = function() {
 		var stockData = {
 				"exchange": selectedCompany.exchDisp,
 				"symbol": selectedCompany.symbol,
-				"list_name": selectedList,
+				"list_id": selectedList,
 				"selectedExchange": selectedExchange
 		};
 
 		$http.post('/stocks', stockData)
 			.success(function(data) {
-				$scope.formData = {};
 				selectedCompany = {};
 				$scope.stocks = data;
 				$('input.typeahead').val("");
@@ -91,6 +97,44 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	$scope.deleteStock = function(symbol) {
 		$http.delete('/stocks/' + symbol + '/' + selectedExchange + '/' + selectedList)
 			.success(function(data) {
+				$scope.stocks = data;
+			})
+			.error(function(data) {
+				console.log('Error: ' + data);
+			});
+	};
+	
+	$scope.openMoveToDialog = function(symbol) {
+		selectedSymbolToMove = symbol;
+		$('#move-to-modal').modal('show');
+		$('#move-' + selectedList).hide();
+	};
+	
+	$scope.setDestination = function(list_id) {
+		previouosDestination = destinationToMove;
+		
+		if (previouosDestination !== '') {
+			$("#move-" + previouosDestination).removeClass("active");
+		}
+		
+		destinationToMove = list_id;
+		$("#move-" + destinationToMove).addClass("active");
+	};
+	
+	$scope.moveStock = function() {
+		$('#move-to-modal').modal('hide');
+		
+		var stockData = {
+				"symbol": selectedSymbolToMove,
+				"selectedExchange": selectedExchange,
+				"source": selectedList,
+				"destination": destinationToMove
+		};
+		
+		$http.post('/stocks/move', stockData)
+			.success(function(data) {
+				selectedSymbolToMove = '';
+				destinationToMove = '';
 				$scope.stocks = data;
 			})
 			.error(function(data) {
