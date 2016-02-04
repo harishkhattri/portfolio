@@ -53,6 +53,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	$('#move-to-modal').on('hide.bs.modal', function() {
 		$('#move-' + selectedList).show();
+		$("#move-" + destinationToMove).removeClass("active");
 	});
 	
 	$scope.getStocks = function(activeList) {
