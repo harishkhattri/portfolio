@@ -3,10 +3,11 @@
 angular.module('StockCtrl', []).controller('StockController', function($scope, $http) {
 	var selectedCompany = {};
 	var selectedExchange = 'BSE';
-	var selectedList = 'holdings';
 	var selectedSymbolToMove = '';
 	var destinationToMove = '';
 	var previouosDestination = '';
+	
+	$scope.selectedList = 'holdings';
 
 	$('input.typeahead').typeahead({
 		hint: true,
@@ -48,19 +49,30 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	$('#exchange').on('change', function(event) {
 		selectedExchange = $('#exchange').val();
-		$scope.getStocks(selectedList);
+		$scope.getStocks($scope.selectedList);
 	});
 	
 	$('#move-to-modal').on('hide.bs.modal', function() {
-		$('#move-' + selectedList).show();
+		$('#move-' + $scope.selectedList).show();
 		$("#move-" + destinationToMove).removeClass("active");
 	});
 	
 	$scope.getStocks = function(activeList) {
-		selectedList = activeList;
-		$http.get('/stocks/' + selectedExchange + '/' + selectedList)
+		$scope.selectedList = activeList;
+		$http.get('/stocks/' + selectedExchange + '/' + $scope.selectedList)
 		.success(function(data) {
 			$scope.stocks = data;
+			
+			if ($scope.selectedList === 'holdings') {
+				$('.bought-action').addClass('hidden');
+				$('.sold-action').removeClass('hidden');
+			} else if ($scope.selectedList === 'watch-list') {
+				$('.bought-action').removeClass('hidden');
+				$('.sold-action').addClass('hidden');
+			} else {
+				$('.bought-action').addClass('hidden');
+				$('.sold-action').addClass('hidden');
+			}
 		})
 		.error(function(data) {
 			console.log('Error: ' + data);
@@ -68,10 +80,10 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	};
 	
 	// when landing on page get all stocks and show them
-	$scope.getStocks(selectedList);
+	$scope.getStocks($scope.selectedList);
 	
 	setInterval(function() {
-		$scope.getStocks(selectedList);
+		$scope.getStocks($scope.selectedList);
 	}, 10000);
 	
 	// when submitting the add form, send data to the Node API
@@ -79,7 +91,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		var stockData = {
 				"exchange": selectedCompany.exchDisp,
 				"symbol": selectedCompany.symbol,
-				"list_id": selectedList,
+				"list_id": $scope.selectedList,
 				"selectedExchange": selectedExchange
 		};
 
@@ -96,7 +108,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	
 	// delete a stock for given symbol
 	$scope.deleteStock = function(symbol) {
-		$http.delete('/stocks/' + symbol + '/' + selectedExchange + '/' + selectedList)
+		$http.delete('/stocks/' + symbol + '/' + selectedExchange + '/' + $scope.selectedList)
 			.success(function(data) {
 				$scope.stocks = data;
 			})
@@ -108,7 +120,7 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 	$scope.openMoveToDialog = function(symbol) {
 		selectedSymbolToMove = symbol;
 		$('#move-to-modal').modal('show');
-		$('#move-' + selectedList).hide();
+		$('#move-' + $scope.selectedList).hide();
 	};
 	
 	$scope.setDestination = function(list_id) {
@@ -122,15 +134,26 @@ angular.module('StockCtrl', []).controller('StockController', function($scope, $
 		$("#move-" + destinationToMove).addClass("active");
 	};
 	
-	$scope.moveStock = function() {
+	$scope.moveStock = function(action, symbol) {
 		$('#move-to-modal').modal('hide');
 		
 		var stockData = {
-				"symbol": selectedSymbolToMove,
+				"symbol": symbol || selectedSymbolToMove,
 				"selectedExchange": selectedExchange,
-				"source": selectedList,
-				"destination": destinationToMove
+				"source": $scope.selectedList
 		};
+		
+		switch (action) {
+		case 'move':
+			stockData.destination = destinationToMove;
+			break;
+		case 'bought':
+			stockData.destination = 'holdings';
+			break;
+		case 'sold':
+			stockData.destination = 'past-holdings';
+			break;
+		}
 		
 		$http.post('/stocks/move', stockData)
 			.success(function(data) {

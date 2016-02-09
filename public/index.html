@@ -108,7 +108,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary" ng-click="moveStock()">Move</button>
+							<button type="button" class="btn btn-primary" ng-click="moveStock('move')">Move</button>
 						</div>
 					</div>
 				</div>
@@ -118,7 +118,7 @@
 		<!-- All stocks table goes here -->
 		<div id="table-panel" class="col-sm-10">
 			<div class="panel panel-default">
-				<table class="table">
+				<table class="table table-hover">
 					<thead>
 						<tr>
 							<th>Name</th>
@@ -128,6 +128,8 @@
 							<th>Day Low</th>
 							<th>Year High</th>
 							<th>Year Low</th>
+							<th ng-if="selectedList === 'watch-list'"></th>
+							<th ng-if="selectedList === 'holdings'"></th>
 							<th></th>
 						</tr>
 					</thead>
@@ -142,6 +144,12 @@
 							<td>{{stock.day_low}}</td>
 							<td>{{stock.year_high}}</td>
 							<td>{{stock.year_low}}</td>
+							<td ng-if="selectedList === 'watch-list'">
+								<button type="button" class="btn btn-info" ng-click="moveStock('bought', stock.symbol)">Bought</button>
+							</td>
+							<td ng-if="selectedList === 'holdings'">
+								<button type="button" class="btn btn-info" ng-click="moveStock('sold', stock.symbol)">Sold</button>
+							</td>
 							<td>
 								<div class="btn-group">
 									<button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle">Actions
