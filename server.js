@@ -12,8 +12,9 @@ var methodOverride = require("method-override");
 // configuration
 var db = require("./config/db");
 var port = process.env.PORT || 8080;
+var mongoDbUrl = process.env.MONGOLAB_URI || db.url;
 
-mongoose.connect(db.url);
+mongoose.connect(mongoDbUrl);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

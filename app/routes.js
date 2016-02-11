@@ -22,7 +22,8 @@ var getStocks = function(response, exchange, list_id) {
 		
 		// Recursive function to handle asynchronous calls to http resquest
 		var getStockData = function(i) {
-			var url = "http://finance.yahoo.com/webservice/v1/symbols/" + stocks[i].symbol
+			var oldSymbol = stocks[i].symbol;
+			var url = "http://finance.yahoo.com/webservice/v1/symbols/" + oldSymbol
 				+ "/quote?format=json&view=detail";
 			
 			request(url, function(err, res, body) {
@@ -44,6 +45,20 @@ var getStocks = function(response, exchange, list_id) {
 				};
 				
 				data.push(stockData);
+				
+				if (oldSymbol !== bodyData.symbol) {
+					Stocks.findOne({symbol: bodyData.symbol}, function(error, stock) {
+						if (error) {
+							response.send(error);
+						}
+						
+						if (stock) {
+							Stocks.remove({symbol: oldSymbol}, function(error, stock) {});
+						} else {
+							Stocks.update({symbol: oldSymbol}, {$set: {symbol: bodyData.symbol}}, function(error, stock) {});
+						}
+					});
+				}
 				
 				i++;
 				
