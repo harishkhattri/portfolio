@@ -1,5 +1,16 @@
 @CHARSET "ISO-8859-1";
 
+#header-jumbo {
+	padding-top: 30px;
+	padding-bottom: 30px;
+	background-color: #17375D;
+	color: #FFFFFF;
+}
+
+#header-jumbo h2 {
+	text-align: center;
+}
+
 .typeahead, .tt-query, .tt-hint {
 	border: 2px solid #CCCCCC;
 	border-radius: 8px;
