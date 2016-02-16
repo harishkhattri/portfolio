@@ -4,11 +4,11 @@
 	padding-top: 30px;
 	padding-bottom: 30px;
 	background-color: #17375D;
-	color: #FFFFFF;
 }
 
 #header-jumbo h2 {
 	text-align: center;
+	color: #FFFFFF;
 }
 
 .typeahead, .tt-query, .tt-hint {
@@ -43,7 +43,7 @@
 	width: 602px;
 }
 .tt-suggestion {
-	font-size: 12px;
+	font-size: 12px !important;
 	line-height: 24px;
 	padding: 3px 20px;
 	cursor: default;
