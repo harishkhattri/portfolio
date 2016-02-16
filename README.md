@@ -1,6 +1,34 @@
-# Personal Portfolio
-This is a personal porfolio management application in which user could add and remove stocks.
-The application is showing following information about added stocks:
+# Personal Portfolio Management
+
+The application could easily cater to an individual (and a developer web developer :)) interested in
+Indian stock market but doesn’t like clutter of free portfolio management services. Apart from running
+locally on his own machine, user could choose to host it on Heroku (http://www.heroku.com) or AWS BeanStalk
+(https://aws.amazon.com/elasticbeanstalk). 
+
+Please follow the steps given on Heroku or AWS BeanStalk for Node.js stack to host the application.
+Tip: On Heroku, one gets an app instance (called dyno) free which is sufficient to host the application.
+Note that you would need a MongoDB Add-on (choose MongoLab & its sandbox edition) to provide database for
+the app. For any issues you can refer to this blog: [Deploying a MEAN Stack Application to Heroku] (http://www.tilcode.com/deploying-a-mean-stack-app-to-heroku/).
+An instance is running [here] (https://glacial-caverns-55839.herokuapp.com/)
+
+The application is built to manage user's own portfolio, hence there is no authentication feature.
+
+**Note: This application does not meant to buy or sell stocks.**
+
+The application having pre-created lists with names as follows:
+
+- Holdings
+- Watch List
+- Past Holdings
+
+These pre-created lists could not be removed. The "Holdings" list will be selected by default.
+User will be able to create their own lists and also remove user-created lists.
+
+User could change exchange using drop down which have BSE and NSE options. The BSE is selected
+by default. The application supports only BSE and NSE exchanges.
+
+User will be able to search stocks and add them to selected list. The application is showing following
+information about added stocks:
 
 - Company Name
 - Price
@@ -10,14 +38,20 @@ The application is showing following information about added stocks:
 - Year High
 - Year Low
 
-The application is getting information about stock from Yahoo Finance webservice. The application
-currently have only one hard-coded list named "Watch List". In future application will have
-multiple lists and also user will be able to create list.
+The application is getting information about stock from Yahoo Finance webservice. User will also be
+able to perform following actions:
 
-The user could change exchange using drop down which have BSE and NSE options. The BSE is selected
-by default.
+- Remove stock from selected list
+- Move stock from selected list to another list
 
-**Note: This application does not meant to buy or sell stocks.**
+Also, their are some special actions for "Holdings" and "Watch List" lists. The "Holdings" list
+having "Sold" button, when user sell any stock (using any other application) and user wants to
+update their portfolio. Then user will click on "Sold" button and that stock will be moved from "Holdings"
+list to "Past Holdings" list.
+
+Similarly, "Watch List" having "Bought" button. When user buy any stock (using any other application) and
+user wants to update their portfolio. Then user will click on "Bought" button and that stock will be
+moved form "Watch List" list to "Holdings" list.
 
 ## Prerequisites
 As this application is using MEAN stack (MongoDB, ExpressJs, AngularJs and Node.js), user needs to
