@@ -59,7 +59,7 @@ install Node.js, npm and MongoDB on his local machine.
 * User could install Node.js [from here] (https://nodejs.org/en/download/package-manager/).
 * User could install MongoDB [from here] (https://docs.mongodb.org/manual/installation/).
 
-## Running Application on Local machine
+## Running Application on Local Machine
 After installing prerequisites, first user needs to start MongoDB using following steps:
 
 * Start command prompt
