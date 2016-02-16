@@ -2,14 +2,13 @@
 
 The application could easily cater to an individual (and a developer web developer :)) interested in
 Indian stock market but doesn’t like clutter of free portfolio management services. Apart from running
-locally on his own machine, user could choose to host it on Heroku (http://www.heroku.com) or AWS BeanStalk
-(https://aws.amazon.com/elasticbeanstalk). 
+locally on his own machine, user could choose to host it on [Heroku] (http://www.heroku.com) or [AWS BeanStalk] (https://aws.amazon.com/elasticbeanstalk). 
 
 Please follow the steps given on Heroku or AWS BeanStalk for Node.js stack to host the application.
 Tip: On Heroku, one gets an app instance (called dyno) free which is sufficient to host the application.
 Note that you would need a MongoDB Add-on (choose MongoLab & its sandbox edition) to provide database for
 the app. For any issues you can refer to this blog: [Deploying a MEAN Stack Application to Heroku] (http://www.tilcode.com/deploying-a-mean-stack-app-to-heroku/).
-An instance is running [here] (https://glacial-caverns-55839.herokuapp.com/)
+An instance is running [here] (https://glacial-caverns-55839.herokuapp.com/).
 
 The application is built to manage user's own portfolio, hence there is no authentication feature.
 
@@ -60,7 +59,7 @@ install Node.js, npm and MongoDB on his local machine.
 * User could install Node.js [from here] (https://nodejs.org/en/download/package-manager/).
 * User could install MongoDB [from here] (https://docs.mongodb.org/manual/installation/).
 
-## Running Application
+## Running Application on Local machine
 After installing prerequisites, first user needs to start MongoDB using following steps:
 
 * Start command prompt
