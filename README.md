@@ -38,7 +38,7 @@ information about added stocks:
 - Year High
 - Year Low
 
-The application is getting information about stock from Yahoo Finance webservice. User will also be
+The application is getting information about stock from **Yahoo Finance webservice**. User will also be
 able to perform following actions:
 
 - Remove stock from selected list
